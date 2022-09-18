@@ -1,4 +1,88 @@
-*{
-    margin: 0;
-    padding: 0;
+* {
+	margin: 0;
+	padding: 0;
+}
+
+.abs-btn-link {
+	position: absolute;
+	top: 5px;
+	right: 15px;
+	color: black;
+	text-decoration: none;
+	margin: 2%;
+	padding: 0.3% 0.8%;
+	font-size: 1.5rem;
+	border: 1px solid black;
+	border-radius: 50%;
+}
+
+.abs-btn-link:hover {
+	color: white;
+	text-decoration: none;
+	background-color: black;
+}
+
+.offcanvas {
+	width: 300px !important;
+	text-align: center;
+}
+
+.sidenav li a {
+	color: black;
+	text-decoration: none;
+	font-size: 1.1rem;
+}
+
+.sidenav li a:hover {
+	color: black;
+	text-decoration: none;
+}
+
+.offcanvas-title {
+	font-size: 1.5rem;
+	margin: 0 auto;
+}
+
+.register {
+	background: #D1913C;  /* fallback for old browsers */
+	background: -webkit-linear-gradient(to right, #FFD194, #D1913C);  /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to right, #FFD194, #D1913C); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	
+}
+
+.register-form{
+	background-color: white;
+	margin: 1.1% 35%;
+	padding: 5%;
+	border-radius: 10%;
+}
+
+.login{
+	background: #ff7e5f;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #feb47b, #ff7e5f);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #feb47b, #ff7e5f); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.login-form{
+	background-color: white;
+	margin: 7.1% 35%;
+	padding: 5%;
+	border-radius: 10%;	
+}
+
+.welcome-sidenav
+{
+	border-right: 1px solid black;
+	height: 100vh;
+}
+
+.rm-a-dec
+{
+	color: black;
+	text-decoration: none;
+}
+
+.rm-a-dec:hover
+{
+	color: black;
 }

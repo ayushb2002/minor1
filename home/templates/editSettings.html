@@ -1,0 +1,24 @@
+{% extends 'base2.html' %}
+
+{% block title %}
+Edit Learner Profile
+{% endblock title %}
+
+{% block content %}
+
+<div class="p-5">
+    <form action="{% url 'updateLearner' %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="level" class="form-label">Select Level</label>
+            <select name="level" class="form-control">
+                <option value="BEG" default selected>Beginner</option>
+                <option value="ITD">Intermediate</option>
+                <option value="ADV">Advanced</option>
+            </select>
+        </div>
+        <input type="submit" value="Submit" class="btn btn-primary">
+    </form>
+</div>
+
+{% endblock content %}

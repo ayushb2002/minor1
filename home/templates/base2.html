@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-3 p-2 welcome-sidenav">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                  <a class="nav-link fs-4 rm-a-dec" href="{% url 'settings' %}">Welcome {{name}}</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link rm-a-dec" href="{% url 'editSettings' %}">Edit Learner Profile</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link rm-a-dec" href="{% url 'changePassword' %}">Change Password</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link rm-a-dec" href="{% url 'deleteAccount' %}">Delete Account</a>
+                </li>
+              </ul>
+        </div>
+        <div class="col-9 p-5">
+          {% block content %}
+
+          {% endblock content %}
+        </div>
+    </div>
+</div>
+{% endblock body %}

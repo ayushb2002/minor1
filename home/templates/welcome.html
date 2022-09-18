@@ -1,0 +1,16 @@
+{% extends 'base2.html' %}
+
+{% block title %}
+Welcome {{name}}
+{% endblock title %}
+
+{% block content %}
+<div class="p-5">
+    <span class="fs-3">If you are a new user, head to <b>Edit Learner Profile</b> section to set your learning style and pattern!</span>
+
+    {% if message %}
+    <br><br>
+    <span class="fs-5 alert alert-info px-5">{{message}}</span>
+    {% endif %}
+</div>
+{% endblock content %}
