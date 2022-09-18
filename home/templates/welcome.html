@@ -6,7 +6,12 @@ Welcome {{name}}
 
 {% block content %}
 <div class="p-5">
-    <span class="fs-3">If you are a new user, head to <b>Edit Learner Profile</b> section to set your learning style and pattern!</span>
+
+    {% if request.user.is_superuser %}
+    <span class="fs-3">Superuser panel!</span>
+    {% else %}
+    <span class="fs-3">If you are a new user, head to <b>Edit Learner Profile</b> section to set your learning level!</span>
+    {% endif %}
 
     {% if message %}
     <br><br>

@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.shortcuts import render, redirect
 from django.conf import settings
 from django.shortcuts import redirect
@@ -5,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseNotFound
 from django.contrib.auth.decorators import login_required
-from .models import Learner
+from .models import Learner, DailyChallenge
 
 
 def index(request):
@@ -84,7 +85,9 @@ def logout_view(request):
 
 
 def loggedInView(request):
-    return render(request, "welcome.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True})
+    context = {"name": request.user.first_name +
+               ' '+request.user.last_name, "loggedIn": True}
+    return render(request, "welcome.html", context)
 
 
 @login_required
@@ -100,6 +103,44 @@ def changePassword(request):
 @login_required
 def deleteAccount(request):
     return render(request, "deleteAccount.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True})
+
+
+@login_required
+def dailyChallenge(request):
+    return render(request, "dailyChallenge.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True})
+
+
+@login_required
+def addDailyChallenge(request):
+    if request.user.is_superuser:
+        print(datetime.today().strftime('%Y-%m-%d'))
+        dc = DailyChallenge.objects.filter(
+            date=datetime.today().strftime('%Y-%m-%d'))
+        if dc:
+            return render(request, "welcome.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Today's word has been already added!"})
+        else:
+            return render(request, "addDailyChallenge.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True})
+    else:
+        return redirect('settings')
+
+
+@login_required
+def addedDailyChallenge(request):
+    if request.user.is_superuser and request.method == "POST":
+        word = request.POST['word']
+        meaning = request.POST['meaning']
+        try:
+            dailyChallenge = DailyChallenge.objects.create(
+                word=word, meaning=meaning)
+            dailyChallenge.save()
+        except:
+            return render(request, "welcome.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Could not add new word!"})
+
+        return render(request, "welcome.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Word Successfully added!"})
+    elif request.method != "POST":
+        return HttpResponseNotFound('<h1>Bad request</h1>')
+    else:
+        return redirect('settings')
 
 
 @login_required
