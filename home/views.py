@@ -7,6 +7,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseNotFound
 from django.contrib.auth.decorators import login_required
 from .models import Learner, DailyChallenge
+import pandas as pd
+import os
+import random
+
+database = pd.read_csv("home/database/dictionary.csv")
 
 
 def index(request):
@@ -39,6 +44,14 @@ def register(request):
 
     else:
         return render(request, "register.html", {"loggedIn": False})
+
+
+def generateOptions():
+    n = len(database)
+    optNo = random.sample(range(0, n-1), 2)
+    meaning1 = database['def'][optNo[0]]
+    meaning2 = database['def'][optNo[1]]
+    return [meaning1, meaning2]
 
 
 def signup(request):
@@ -107,13 +120,51 @@ def deleteAccount(request):
 
 @login_required
 def dailyChallenge(request):
-    return render(request, "dailyChallenge.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True})
+    if request.method == "POST":
+        selected = request.POST['option']
+        context = {
+            "name": request.user.first_name+' '+request.user.last_name,
+            "loggedIn": True,
+        }
+        try:
+            dc = DailyChallenge.objects.filter(
+                date=datetime.today().strftime('%Y-%m-%d')).values()
+            DailyChallenge.objects.filter(date=datetime.today().strftime(
+                '%Y-%m-%d')).update(dailyChallengeSolved=True)
+            if selected == dc[0]['meaning']:
+                context['submit'] = True
+                context['success'] = True
+                context['message'] = "Your answer is right! Come back tomorrow for next challenge!"
+                return render(request, "dailyChallenge.html", context)
+            else:
+                context['submit'] = True
+                context['success'] = False
+                context['message'] = "You answer is wrong! The right meaning of the word is " + \
+                    dc[0]['meaning']+". See you tomorrow!"
+                return render(request, "dailyChallenge.html", context)
+        except:
+            context['message'] = "Could not submit the answer!"
+            return render(request, "dailyChallenge.html", context)
+    else:
+        try:
+            dc = DailyChallenge.objects.filter(
+                date=datetime.today().strftime('%Y-%m-%d')).values()
+            if dc[0]['dailyChallengeSolved']:
+                return render(request, "dailyChallenge.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "You have already solved today's challenge!"})
+            options = generateOptions()
+            print(dc[0])
+            options.append(dc[0]['meaning'])
+            random.shuffle(options)
+            print(options)
+            word = dc[0]['word']
+            return render(request, "dailyChallenge.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "word": word, "meaning": options, "date": dc[0]['date']})
+        except:
+            return render(request, "dailyChallenge.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Today's daily challenge will be uploaded soon!"})
 
 
 @login_required
 def addDailyChallenge(request):
     if request.user.is_superuser:
-        print(datetime.today().strftime('%Y-%m-%d'))
         dc = DailyChallenge.objects.filter(
             date=datetime.today().strftime('%Y-%m-%d'))
         if dc:

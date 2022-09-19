@@ -10,8 +10,43 @@ Daily Challenge
         <div class="col-12 text-center p-5">
             <span class="fs-3 fw-bold">Daily Challenge</span>
         </div>
-        <div class="col-12 p-5">
-            
+        <div class="col-11 p-5">
+            {% if message %}
+            {% if submit %}
+            {% if success %}
+            <div class="alert alert-success p-5 m-5">
+                <span class="fs-4">{{message}}</span>
+            </div>
+            {% else %}
+            <div class="alert alert-danger p-5 m-5">
+                <span class="fs-4">{{message}}</span>
+            </div>
+            {% endif %}
+
+            {% else %}
+            <div class="alert alert-info p-3">
+                <span>{{message}}</span>
+            </div>
+            {% endif %}
+
+            {% else %}
+            <span class="fs-2">{{word}}</span>
+
+            <div>
+                {% for i in meaning %}
+                <form action="{% url 'dailyChallenge' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="option" value="{{i}}">
+                <button type="submit" class="alert alert-info p-2 m-2 w-100">
+                    {{i}}
+                </button>
+                </form>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-1">
+            {{date}}
         </div>
     </div>
 </div>
