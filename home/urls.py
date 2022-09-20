@@ -19,4 +19,5 @@ urlpatterns = [
     path('addDailyChallenge', views.addDailyChallenge, name="addDailyChallenge"),
     path('addedDailyChallenge', views.addedDailyChallenge,
          name="addedDailyChallenge"),
+    path('trackChallenges', views.track, name="trackChallenges"),
 ]

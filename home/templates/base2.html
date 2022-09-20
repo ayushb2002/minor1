@@ -2,40 +2,42 @@
 
 {% block body %}
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-3 p-2 welcome-sidenav">
-            <ul class="nav flex-column">
-                <li class="nav-item my-5">
-                  <a class="nav-link fs-4 rm-a-dec text-decoration-underline" href="{% url 'settings' %}">Welcome {{name}}</a>
-                </li>
+  <div class="row">
+    <div class="col-3 p-2 welcome-sidenav">
+      <ul class="nav flex-column">
+        <li class="nav-item my-5">
+          <a class="nav-link fs-4 rm-a-dec text-decoration-underline" href="{% url 'settings' %}">Welcome {{name}}</a>
+        </li>
 
-                {% if request.user.is_superuser %}
-                <li class="nav-item">
-                  <a class="nav-link rm-a-dec" href="{% url 'addDailyChallenge' %}">Add daily challenge word</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link rm-a-dec" href="{% url 'changePassword' %}">Change Password</a>
-                </li>
-                {% else %}
+        {% if request.user.is_superuser %}
+        <li class="nav-item">
+          <a class="nav-link rm-a-dec" href="{% url 'addDailyChallenge' %}">Add daily challenge word</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link rm-a-dec" href="{% url 'changePassword' %}">Change Password</a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link rm-a-dec" href="{% url 'trackChallenges' %}">Daily challenge history</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link rm-a-dec" href="{% url 'editSettings' %}">Edit Learner Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link rm-a-dec" href="{% url 'changePassword' %}">Change Password</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link rm-a-dec" href="{% url 'deleteAccount' %}">Delete Account</a>
+        </li>
 
-                <li class="nav-item">
-                  <a class="nav-link rm-a-dec" href="{% url 'editSettings' %}">Edit Learner Profile</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link rm-a-dec" href="{% url 'changePassword' %}">Change Password</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link rm-a-dec" href="{% url 'deleteAccount' %}">Delete Account</a>
-                </li>
-
-                {% endif %}
-              </ul>
-        </div>
-        <div class="col-9 p-5">
-          {% block content %}
-
-          {% endblock content %}
-        </div>
+        {% endif %}
+      </ul>
     </div>
+    <div class="col-9 p-5">
+      {% block content %}
+
+      {% endblock content %}
+    </div>
+  </div>
 </div>
 {% endblock body %}

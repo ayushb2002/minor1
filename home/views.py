@@ -142,7 +142,7 @@ def dailyChallenge(request):
                 context['success'] = False
                 context['message'] = "You answer is wrong! The right meaning of the word is " + \
                     dc[0]['meaning']+". See you tomorrow!"
-                track = TrackDailyChallenge.objects.create(user=request.user, challenge=daily[0], solvedCorrectly=False)
+                track = TrackDailyChallenge.objects.create(user=request.user, challenge=daily[0])
                 track.save()
                 return render(request, "dailyChallenge.html", context)
         except:
@@ -218,3 +218,14 @@ def updateLearner(request):
         return render(request, "welcome.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Updated previous preference!"})
     else:
         return HttpResponseNotFound('<h1>Bad request!</h1>')
+
+@login_required
+def track(request):
+    try:
+        track = TrackDailyChallenge.objects.filter(user=request.user)
+        if track:
+            return render(request, "track.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "record": track, "total": len(track)})
+        else:
+            return render(request, "track.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "No challenge played yet!"})
+    except:
+        return render(request, "track.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Server error! Try again later!"})

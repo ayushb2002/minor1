@@ -26,7 +26,7 @@ class DailyChallenge(models.Model):
 class TrackDailyChallenge(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     date = models.DateField(default=datetime.today().strftime(
-        '%Y-%m-%d'), blank=True, unique=True)
+        '%Y-%m-%d'), blank=True)
     challenge = models.ForeignKey(
         DailyChallenge, null=False, on_delete=models.CASCADE)
     solvedCorrectly = models.BooleanField(default=False, null=False)

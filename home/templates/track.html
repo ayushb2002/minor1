@@ -1,0 +1,59 @@
+{% extends 'base2.html' %}
+
+{% block title %}
+Daily Challenge Track
+{% endblock title %}
+
+{% block content %}
+
+{% if message %}
+
+<div class="alert alert-info p-5 m-5">
+    {{message}}
+</div>
+
+{% else %}
+
+<div class="row">
+    <div class="col-12 py-3 px-5">
+        <span class="fs-3 text-decoration-underline">Attempted challenges!</span>
+    </div>
+    <div class="col-12 p-5">
+        <div class="my-2">
+            <span class="fs-4">Total challenges solved - {{total}}</span>
+        </div>
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Challenge</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for rec in record %}
+        
+              <tr>
+                <td>{{rec.date}}</td>
+                <td>{{rec.challenge.word}}</td>
+                <td>
+                    {% if rec.solvedCorrectly %}
+                    <span class="text-success fw-bold">Solved!</span>
+                    {% else %}
+                    <span class="text-danger fw-bold">Not solved!</span>
+                    {% endif %}
+                </td>
+              </tr>
+        
+              {% endfor %}
+            </tbody>
+          </table>
+            
+    </div>
+
+</div>
+
+
+{% endif %}
+
+{% endblock content %}
