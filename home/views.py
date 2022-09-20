@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseNotFound
 from django.contrib.auth.decorators import login_required
-from .models import Learner, DailyChallenge
+from .models import Learner, DailyChallenge, TrackDailyChallenge
 import pandas as pd
 import os
 import random
@@ -127,39 +127,47 @@ def dailyChallenge(request):
             "loggedIn": True,
         }
         try:
-            dc = DailyChallenge.objects.filter(
-                date=datetime.today().strftime('%Y-%m-%d')).values()
-            DailyChallenge.objects.filter(date=datetime.today().strftime(
-                '%Y-%m-%d')).update(dailyChallengeSolved=True)
+            daily = DailyChallenge.objects.filter(
+                date=datetime.today().strftime('%Y-%m-%d'))
+            dc = daily.values()
             if selected == dc[0]['meaning']:
                 context['submit'] = True
                 context['success'] = True
                 context['message'] = "Your answer is right! Come back tomorrow for next challenge!"
+                track = TrackDailyChallenge.objects.create(user=request.user, challenge=daily[0], solvedCorrectly=True)
+                track.save()
                 return render(request, "dailyChallenge.html", context)
             else:
                 context['submit'] = True
                 context['success'] = False
                 context['message'] = "You answer is wrong! The right meaning of the word is " + \
                     dc[0]['meaning']+". See you tomorrow!"
+                track = TrackDailyChallenge.objects.create(user=request.user, challenge=daily[0], solvedCorrectly=False)
+                track.save()
                 return render(request, "dailyChallenge.html", context)
         except:
             context['message'] = "Could not submit the answer!"
             return render(request, "dailyChallenge.html", context)
     else:
         try:
-            dc = DailyChallenge.objects.filter(
-                date=datetime.today().strftime('%Y-%m-%d')).values()
-            if dc[0]['dailyChallengeSolved']:
-                return render(request, "dailyChallenge.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "You have already solved today's challenge!"})
-            options = generateOptions()
-            print(dc[0])
-            options.append(dc[0]['meaning'])
-            random.shuffle(options)
-            print(options)
-            word = dc[0]['word']
-            return render(request, "dailyChallenge.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "word": word, "meaning": options, "date": dc[0]['date']})
+            track = TrackDailyChallenge.objects.filter(
+                user=request.user, date=datetime.today().strftime('%Y-%m-%d')).values()
+            if track:
+                return render(request, "dailyChallenge.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "You have already solved today's challenge, come back tomorrow for new one!"})
+            else:
+                try:
+                    dc = DailyChallenge.objects.filter(
+                        date=datetime.today().strftime('%Y-%m-%d')).values()
+                    options = generateOptions()
+                    options.append(dc[0]['meaning'])
+                    random.shuffle(options)
+                    word = dc[0]['word']
+                    return render(request, "dailyChallenge.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "word": word, "meaning": options, "date": dc[0]['date']})
+                except:
+                    return render(request, "dailyChallenge.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Today's daily challenge will be uploaded soon!"})
         except:
-            return render(request, "dailyChallenge.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Today's daily challenge will be uploaded soon!"})
+            return render(request, "dailyChallenge.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Server error! Try again later!"})
+        
 
 
 @login_required
