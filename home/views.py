@@ -224,7 +224,7 @@ def track(request):
     try:
         track = TrackDailyChallenge.objects.filter(user=request.user)
         if track:
-            return render(request, "track.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "record": track, "total": len(track)})
+            return render(request, "track.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "record": reversed(track), "total": len(track)})
         else:
             return render(request, "track.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "No challenge played yet!"})
     except:

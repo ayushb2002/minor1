@@ -26,7 +26,8 @@ Daily Challenge Track
             <thead>
               <tr>
                 <th scope="col">Date</th>
-                <th scope="col">Challenge</th>
+                <th scope="col">Word</th>
+                <th scope="col">Meaning</th>
                 <th scope="col">Status</th>
               </tr>
             </thead>
@@ -36,6 +37,7 @@ Daily Challenge Track
               <tr>
                 <td>{{rec.date}}</td>
                 <td>{{rec.challenge.word}}</td>
+                <td>{{rec.challenge.meaning}}</td>
                 <td>
                     {% if rec.solvedCorrectly %}
                     <span class="text-success fw-bold">Solved!</span>
