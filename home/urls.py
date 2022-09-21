@@ -20,4 +20,6 @@ urlpatterns = [
     path('addedDailyChallenge', views.addedDailyChallenge,
          name="addedDailyChallenge"),
     path('trackChallenges', views.track, name="trackChallenges"),
+    path('userPersonalDetails', views.userPersonalDetails,
+         name="userPersonalDetails")
 ]

@@ -1,0 +1,61 @@
+{% extends 'base2.html' %}
+
+{% block title %}
+Add personal details
+{% endblock title %}
+
+{% block content %}
+
+<div class="p-5">
+
+    {% if message %}
+
+    <div class="alert alert-info">
+        {{message}}
+    </div>
+
+    {% else %}
+
+    <div class="p-5">
+        <table class="table p-5">
+            <tbody>
+                <tr>
+                    <td>Current age group</td>
+                    <td>{{details.age_group}}</td>
+                </tr>
+                <tr>
+                    <td>Current education status</td>
+                    <td>{{details.education_group}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <form action="{% url 'userPersonalDetails' %}" method="post" class="mx-5 px-5">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="age" class="form-label">Select age group</label>
+            <select name="age" class="form-select">
+                <option value="U10" default selected>3-10</option>
+                <option value="U18">10-18</option>
+                <option value="A18">18 or Above</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="education" class="form-label">Select highest education level</label>
+            <select name="education" class="form-select">
+                <option value="NON" default selected>Uneducated</option>
+                <option value="PRI">Primary School Student</option>
+                <option value="SEC">Secondary School Student</option>
+                <option value="UDG">Undergraduate</option>
+                <option value="PTG">Post Graduate</option>
+            </select>
+        </div>
+        <input type="submit" value="Submit" class="btn btn-primary">
+    </form>
+
+    {% endif %}
+    
+</div>
+
+{% endblock content %}

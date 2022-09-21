@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseNotFound
 from django.contrib.auth.decorators import login_required
-from .models import Learner, DailyChallenge, TrackDailyChallenge
+from .models import Learner, DailyChallenge, TrackDailyChallenge, UserPersonalDetails
 import pandas as pd
 import os
 import random
@@ -69,6 +69,8 @@ def signup(request):
             user.save()
             learner = Learner.objects.create(level='BEG', user=user)
             learner.save()
+            personalDetails = UserPersonalDetails.objects.create(user=request.user)
+            personalDetails.save()
         except:
             return render(request, "register.html", {"message": "Cannot create the user!", "loggedIn": False})
 
@@ -206,7 +208,6 @@ def addedDailyChallenge(request):
 def updateLearner(request):
     if request.method == "POST":
         level = request.POST['level']
-        print(level)
         try:
             learner = Learner.objects.filter(
                 user=request.user).update(level=level)
@@ -229,3 +230,25 @@ def track(request):
             return render(request, "track.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "No challenge played yet!"})
     except:
         return render(request, "track.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Server error! Try again later!"})
+
+@login_required
+def userPersonalDetails(request):
+    if request.method == "POST":
+        age_group = request.POST['age']
+        education_group = request.POST['education']
+        try:
+            personalDetails = UserPersonalDetails.objects.filter(
+                user=request.user).update(age_group=age_group, education_group=education_group)
+        except:
+            personalDetails = UserPersonalDetails.objects.create(age_group=age_group, education_group=education_group, user=request.user)
+            personalDetails.save()
+            return render(request, "ageAndEducation.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Created new preference!"})
+
+        return render(request, "ageAndEducation.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Updated previous preference!"})
+    else:
+        try:
+            personalDetails = UserPersonalDetails.objects.filter(user=request.user).values()
+        except:
+            return HttpResponseNotFound('<h1>Error in user profile!</h1>')
+
+        return render(request, "ageAndEducation.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "details": personalDetails[0]})
