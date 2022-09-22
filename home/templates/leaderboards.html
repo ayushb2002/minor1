@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Leader-board | Daily Challenge
+{% endblock title %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 text-center p-5">
+            <span class="fw-bold fs-3">Leader Boards</span>
+        </div>
+        <div class="col-12" style="padding: 2.5% 20%;">
+            {% if message %}
+            {{message}}
+            {% elif track %}
+            <div class="row">
+                <div class="col-lg-9 col-sm-12"></div>
+                <div class="col-lg-3 col-sm-12">
+                    <form action="{% url 'leaderboards' %}" method="post" class="py-1">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-8">
+                                <select name="filter" class="form-select">
+                                    <option value="DLY" default selected>Daily</option>
+                                    <option value="WLY">Weekly</option>
+                                    <option value="MLY">Monthly</option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <input type="submit" value="Filter" class="btn btn-primary">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-12">
+                    <table class="table text-center p-5">
+                        <thead>
+                            <tr>
+                                <th scope="col">Username</th>
+                                <th scope="col">Accuracy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tr in track %}
+                            <tr>
+                                <td>{{tr.user}}</td>
+                                <td>{{tr.accuracy|floatformat:2}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% else %}
+
+            <div class="row">
+                <div class="col-lg-9 col-sm-12"></div>
+                <div class="col-lg-3 col-sm-12">
+                    <form action="{% url 'leaderboards' %}" method="post" class="py-1">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-8">
+                                <select name="filter" class="form-select">
+                                    <option value="DLY" default selected>Daily</option>
+                                    <option value="WLY">Weekly</option>
+                                    <option value="MLY">Monthly</option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <input type="submit" value="Filter" class="btn btn-primary">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-12">
+                    <table class="table text-center p-5">
+                        <thead>
+                            <tr>
+                                <th scope="col">User ID</th>
+                                <th scope="col">Accuracy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for d in data %}
+                            <tr>
+                                <td>{{d.user_id}}</td>
+                                {% if d.group == 'MLY' %}
+                                <td>{{d.monthly}}</td>
+                                {% else %}
+                                <td>{{d.weekly}}</td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock body %}

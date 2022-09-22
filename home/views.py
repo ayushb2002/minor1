@@ -1,4 +1,5 @@
 from datetime import datetime
+import datetime as dtm
 from django.shortcuts import render, redirect
 from django.conf import settings
 from django.shortcuts import redirect
@@ -6,10 +7,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseNotFound
 from django.contrib.auth.decorators import login_required
-from .models import Learner, DailyChallenge, TrackDailyChallenge, UserPersonalDetails
+from .models import Learner, DailyChallenge, TrackDailyChallenge, UserPersonalDetails, TrackLeaderboard
 import pandas as pd
-import os
 import random
+from pytz import timezone 
 
 database = pd.read_csv("home/database/dictionary.csv")
 
@@ -46,6 +47,42 @@ def register(request):
         return render(request, "register.html", {"loggedIn": False})
 
 
+def updateLeaderboardDataForUser(user, date, group):
+    print(user, date, group)
+    try:
+        track = TrackDailyChallenge.objects.filter(user=user, date__range=[
+                                                   datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'), date]).order_by('-accuracy')
+        if track is None:
+            return False
+
+        avg, iter = 0, 0
+        for tr in track:
+            iter += 1
+            avg += tr.accuracy
+        avg = avg/iter
+
+        try:
+            if group == 'MLY':
+                trackLb = TrackLeaderboard.objects.update(
+                    user=user, group=group, monthly=avg)
+            elif group == 'WLY':
+                trackLb = TrackLeaderboard.objects.update(
+                    user=user, group=group, weekly=avg)
+        except:
+            if group == 'MLY':
+                trackLb = TrackLeaderboard.objects.create(
+                    user=user, group=group, monthly=avg)
+                trackLb.save()
+            elif group == 'WLY':
+                trackLb = TrackLeaderboard.objects.create(
+                    user=user, group=group, weekly=avg)
+                trackLb.save()
+
+        return True
+    except:
+        return False
+
+
 def generateOptions():
     n = len(database)
     optNo = random.sample(range(0, n-1), 2)
@@ -69,8 +106,15 @@ def signup(request):
             user.save()
             learner = Learner.objects.create(level='BEG', user=user)
             learner.save()
-            personalDetails = UserPersonalDetails.objects.create(user=request.user)
+            personalDetails = UserPersonalDetails.objects.create(
+                user=user)
             personalDetails.save()
+            trackLbM = TrackLeaderboard.objects.create(
+                user=user, group='MLY', monthly=0.00, weekly=0.00)
+            trackLbM.save()
+            trackLbW = TrackLeaderboard.objects.create(
+                user=user, group='WLY', weekly=0.00, monthly=0.00)
+            trackLbW.save()
         except:
             return render(request, "register.html", {"message": "Cannot create the user!", "loggedIn": False})
 
@@ -130,13 +174,14 @@ def dailyChallenge(request):
         }
         try:
             daily = DailyChallenge.objects.filter(
-                date=datetime.today().strftime('%Y-%m-%d'))
+                date=datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'))
             dc = daily.values()
             if selected == dc[0]['meaning']:
                 context['submit'] = True
                 context['success'] = True
                 context['message'] = "Your answer is right! Come back tomorrow for next challenge!"
-                track = TrackDailyChallenge.objects.create(user=request.user, challenge=daily[0], solvedCorrectly=True)
+                track = TrackDailyChallenge.objects.create(
+                    user=request.user, challenge=daily[0], solvedCorrectly=True, accuracy=100.00)
                 track.save()
                 return render(request, "dailyChallenge.html", context)
             else:
@@ -144,7 +189,8 @@ def dailyChallenge(request):
                 context['success'] = False
                 context['message'] = "You answer is wrong! The right meaning of the word is " + \
                     dc[0]['meaning']+". See you tomorrow!"
-                track = TrackDailyChallenge.objects.create(user=request.user, challenge=daily[0])
+                track = TrackDailyChallenge.objects.create(
+                    user=request.user, challenge=daily[0], accuracy=0.00)
                 track.save()
                 return render(request, "dailyChallenge.html", context)
         except:
@@ -153,13 +199,13 @@ def dailyChallenge(request):
     else:
         try:
             track = TrackDailyChallenge.objects.filter(
-                user=request.user, date=datetime.today().strftime('%Y-%m-%d')).values()
+                user=request.user, date=datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d')).values()
             if track:
                 return render(request, "dailyChallenge.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "You have already solved today's challenge, come back tomorrow for new one!"})
             else:
                 try:
                     dc = DailyChallenge.objects.filter(
-                        date=datetime.today().strftime('%Y-%m-%d')).values()
+                        date=datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d')).values()
                     options = generateOptions()
                     options.append(dc[0]['meaning'])
                     random.shuffle(options)
@@ -169,14 +215,13 @@ def dailyChallenge(request):
                     return render(request, "dailyChallenge.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Today's daily challenge will be uploaded soon!"})
         except:
             return render(request, "dailyChallenge.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Server error! Try again later!"})
-        
 
 
 @login_required
 def addDailyChallenge(request):
     if request.user.is_superuser:
         dc = DailyChallenge.objects.filter(
-            date=datetime.today().strftime('%Y-%m-%d'))
+            date=datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'))
         if dc:
             return render(request, "welcome.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Today's word has been already added!"})
         else:
@@ -220,6 +265,7 @@ def updateLearner(request):
     else:
         return HttpResponseNotFound('<h1>Bad request!</h1>')
 
+
 @login_required
 def track(request):
     try:
@@ -231,6 +277,7 @@ def track(request):
     except:
         return render(request, "track.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Server error! Try again later!"})
 
+
 @login_required
 def userPersonalDetails(request):
     if request.method == "POST":
@@ -240,15 +287,127 @@ def userPersonalDetails(request):
             personalDetails = UserPersonalDetails.objects.filter(
                 user=request.user).update(age_group=age_group, education_group=education_group)
         except:
-            personalDetails = UserPersonalDetails.objects.create(age_group=age_group, education_group=education_group, user=request.user)
+            personalDetails = UserPersonalDetails.objects.create(
+                age_group=age_group, education_group=education_group, user=request.user)
             personalDetails.save()
             return render(request, "ageAndEducation.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Created new preference!"})
 
         return render(request, "ageAndEducation.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Updated previous preference!"})
     else:
         try:
-            personalDetails = UserPersonalDetails.objects.filter(user=request.user).values()
+            personalDetails = UserPersonalDetails.objects.filter(
+                user=request.user).values()
         except:
             return HttpResponseNotFound('<h1>Error in user profile!</h1>')
 
         return render(request, "ageAndEducation.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "details": personalDetails[0]})
+
+
+def updateLeaderboardDataForUser(user, date, group):
+    try:
+        track = TrackDailyChallenge.objects.filter(user=user, date__range=[
+                                                   date, datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d')]).order_by('-accuracy')
+        if track is None:
+            return False
+
+        avg, iter = 0, 0
+        for tr in track:
+            iter += 1
+            avg += tr.accuracy
+        avg = avg/iter
+        try:
+            if group == 'MLY':
+                trackLb = TrackLeaderboard.objects.filter(
+                    user=user, group=group).update(monthly=avg)
+            elif group == 'WLY':
+                trackLb = TrackLeaderboard.objects.filter(
+                    user=user, group=group).update(weekly=avg)
+        except:
+            try:
+                if group == 'MLY':
+                    trackLb = TrackLeaderboard.objects.create(
+                        user=user, group=group, monthly=avg)
+                elif group == 'WLY':
+                    trackLb = TrackLeaderboard.objects.create(
+                        user=user, group=group, weekly=avg)
+                trackLb.save()
+            except:
+                return False
+
+        return True
+    except:
+        return False
+
+
+@login_required
+def leaderboards(request):
+    if request.method == "POST":
+        filter = request.POST['filter']
+        if filter == 'DLY':
+            try:
+                track = TrackDailyChallenge.objects.filter(
+                    date=datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d')).order_by('-accuracy')
+                context = {
+                    "name": request.user.first_name+' '+request.user.last_name,
+                    "loggedIn": True,
+                    "track": track
+                }
+                return render(request, "leaderboards.html", context)
+            except:
+                context = {
+                    "name": request.user.first_name+' '+request.user.last_name,
+                    "loggedIn": True,
+                    "message": "Could not load your request!"
+                }
+                return render(request, "leaderboards.html", context)
+        elif filter == 'WLY':
+            date = (datetime.now(timezone("Asia/Kolkata"))-dtm.timedelta(days=7)).date()
+        elif filter == 'MLY':
+            date = (datetime.now(timezone("Asia/Kolkata"))-dtm.timedelta(days=30)).date()
+        else:
+            return HttpResponseNotFound('<h1>Invalid Filter!</h1>')
+        if updateLeaderboardDataForUser(user=request.user, date=date, group=filter):
+            try:
+                if filter == 'WLY':
+                    trackLb = TrackLeaderboard.objects.filter(
+                        group=filter).order_by('-weekly')
+                elif filter == 'MLY':
+                    trackLb = TrackLeaderboard.objects.filter(
+                        group=filter).order_by('-monthly')
+            except:
+                context = {
+                    "name": request.user.first_name+' '+request.user.last_name,
+                    "loggedIn": True,
+                    "message": "Could not load your request!"
+                }
+                return render(request, "leaderboards.html", context)
+            context = {
+                "name": request.user.first_name+' '+request.user.last_name,
+                "loggedIn": True,
+                "data": trackLb.values()
+            }
+            return render(request, "leaderboards.html", context)
+        else:
+            context = {
+                "name": request.user.first_name+' '+request.user.last_name,
+                "loggedIn": True,
+                "message": "Could not load your request!"
+            }
+            return render(request, "leaderboards.html", context)
+    else:
+        try:
+            track = TrackDailyChallenge.objects.filter(
+                date=datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d')).order_by('-accuracy')
+            context = {
+                "name": request.user.first_name+' '+request.user.last_name,
+                "loggedIn": True,
+                "track": track
+            }
+            return render(request, "leaderboards.html", context)
+        except:
+            context = {
+                "name": request.user.first_name+' '+request.user.last_name,
+                "loggedIn": True,
+                "message": "Could not load your request!"
+            }
+            return render(request, "leaderboards.html", context)

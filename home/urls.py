@@ -21,5 +21,6 @@ urlpatterns = [
          name="addedDailyChallenge"),
     path('trackChallenges', views.track, name="trackChallenges"),
     path('userPersonalDetails', views.userPersonalDetails,
-         name="userPersonalDetails")
+         name="userPersonalDetails"),
+     path('leaderboards', views.leaderboards, name="leaderboards"),
 ]
