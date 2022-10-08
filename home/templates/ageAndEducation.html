@@ -10,11 +10,30 @@ Add personal details
 
     {% if message %}
 
-    <div class="alert alert-info">
+    <div class="alert alert-info p-4">
         {{message}}
     </div>
 
+    {% if suggestedLevel %}
+
+    <div class="row alert alert-success">
+        <div class="col-9 my-auto">
+            Suggested Level is <b>{{suggestedLevel}}</b>
+        </div>
+
+        <div class="col-3">
+            <form action="{% url 'updateLearner' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="level" value="{{suggestedLevelCode}}">
+                <button type="submit" name="submit" class="btn btn-secondary">Update Level!</button>
+            </form>
+        </div> 
+    </div>
+
+    {% endif %}
+
     {% else %}
+
 
     <div class="p-5">
         <table class="table p-5">
@@ -55,7 +74,6 @@ Add personal details
     </form>
 
     {% endif %}
-    
 </div>
 
 {% endblock content %}

@@ -7,6 +7,12 @@ Edit Learner Profile
 {% block content %}
 
 <div class="p-5">
+
+    {% if level %}
+    <div class="p-3">
+        Current Level : {{level}}
+    </div>
+    {% endif %}
     <form action="{% url 'updateLearner' %}" method="post" class="mx-5 px-5">
         {% csrf_token %}
         <div class="mb-3">

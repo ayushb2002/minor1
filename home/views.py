@@ -10,9 +10,28 @@ from django.contrib.auth.decorators import login_required
 from .models import Learner, DailyChallenge, TrackDailyChallenge, UserPersonalDetails, TrackLeaderboard
 import pandas as pd
 import random
-from pytz import timezone 
+from pytz import timezone
 
 database = pd.read_csv("home/database/dictionary.csv")
+
+
+def determineLevel(age_group, education_group):
+
+    BEGINNER = [('U10', 'NON'), ('U18', 'NON'), ('A18', 'NON'), ('U10', 'PRI'),
+                ('U18', 'PRI'), ('A18', 'PRI'), ('U10', 'SEC'), ('U10', 'PTG')]
+    INTERMEDIATE = [('U18', 'SEC'), ('A18', 'SEC'),
+                    ('U10', 'UDG'), ('U18', 'UDG')]
+    ADVANCE = [('U18', 'PTG'), ('A18', 'PTG'), ('U18', 'PTG'), ('A18', 'UDG')]
+
+    pair = (age_group, education_group)
+    if pair in BEGINNER:
+        return "Beginner", "BEG"
+    elif pair in INTERMEDIATE:
+        return "Intermediate", "IDT"
+    elif pair in ADVANCE:
+        return "Advance", "ADV"
+
+    return "Beginner", "BEG"
 
 
 def index(request):
@@ -151,7 +170,8 @@ def loggedInView(request):
 
 @login_required
 def editSettings(request):
-    return render(request, "editSettings.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True})
+    current = Learner.objects.filter(user=request.user)[0]
+    return render(request, "editSettings.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "level": current.level})
 
 
 @login_required
@@ -283,6 +303,8 @@ def userPersonalDetails(request):
     if request.method == "POST":
         age_group = request.POST['age']
         education_group = request.POST['education']
+        level, code = determineLevel(age_group=age_group,
+                                     education_group=education_group)
         try:
             personalDetails = UserPersonalDetails.objects.filter(
                 user=request.user).update(age_group=age_group, education_group=education_group)
@@ -290,9 +312,9 @@ def userPersonalDetails(request):
             personalDetails = UserPersonalDetails.objects.create(
                 age_group=age_group, education_group=education_group, user=request.user)
             personalDetails.save()
-            return render(request, "ageAndEducation.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Created new preference!"})
+            return render(request, "ageAndEducation.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Created new preference!", "suggestedLevel": level, "suggestedLevelCode": code})
 
-        return render(request, "ageAndEducation.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Updated previous preference!"})
+        return render(request, "ageAndEducation.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Updated previous preference!", "suggestedLevel": level, "suggestedLevelCode": code})
     else:
         try:
             personalDetails = UserPersonalDetails.objects.filter(
@@ -361,9 +383,11 @@ def leaderboards(request):
                 }
                 return render(request, "leaderboards.html", context)
         elif filter == 'WLY':
-            date = (datetime.now(timezone("Asia/Kolkata"))-dtm.timedelta(days=7)).date()
+            date = (datetime.now(timezone("Asia/Kolkata")) -
+                    dtm.timedelta(days=7)).date()
         elif filter == 'MLY':
-            date = (datetime.now(timezone("Asia/Kolkata"))-dtm.timedelta(days=30)).date()
+            date = (datetime.now(timezone("Asia/Kolkata")) -
+                    dtm.timedelta(days=30)).date()
         else:
             return HttpResponseNotFound('<h1>Invalid Filter!</h1>')
         if updateLeaderboardDataForUser(user=request.user, date=date, group=filter):
