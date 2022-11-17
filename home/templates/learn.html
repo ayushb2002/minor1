@@ -7,10 +7,48 @@ Learn
 {% block body %}
 <div class="container-fluid">
     <div class="row">
+        {% if loggedIn %}
+
+        <div class="col-12 text-center p-5">
+            <span class="fw-bold fs-3">VskillUp</span>
+        </div>
+
+        {% if limit %}
+
+        <div class="col-12 p-5">
+            <span class="fs-2">Daily Limit Reached!</span>
+        </div>
+
+        {% else %}
+
+        <div class="col-11 p-5">
+            <span class="fs-2">{{question}}</span><br>
+            <span class="fs-4">{{pos}}</span>
+            <br><br>
+            <form action="{% url 'learn_form_check' %}" method="post">
+                {% csrf_token %}
+                <div class="my-5">
+                    <input type="hidden" name="index" value="{{index}}">
+                <input type="text" name="answer" class="form-control" placeholder="Enter your answer!">
+                </div>
+                <input type="submit" name="submit" class="btn btn-success" value="Submit">
+            </form>
+        </div>
+        <div class="col-1">
+            {{date}} <br><br>
+            Attempt - {{attempts}}
+        </div>
+
+        {% endif %}
+
+        {% else %}
+
         <div class="col-12 text-center p-5">
             <span class="fw-bold fs-3">Welcome to Minor Project</span><br>
             <span class="fw-bold fs-3">VskillUp</span>
         </div>
+        
+        {% endif %}
     </div>
 </div>
 {% endblock body %}

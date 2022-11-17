@@ -23,4 +23,5 @@ urlpatterns = [
     path('userPersonalDetails', views.userPersonalDetails,
          name="userPersonalDetails"),
      path('leaderboards', views.leaderboards, name="leaderboards"),
+     path('learn_form_check', views.learn_form_check, name="learn_form_check"),
 ]

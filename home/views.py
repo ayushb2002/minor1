@@ -7,13 +7,28 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseNotFound
 from django.contrib.auth.decorators import login_required
-from .models import Learner, DailyChallenge, TrackDailyChallenge, UserPersonalDetails, TrackLeaderboard
+from .models import Learner, DailyChallenge, TrackDailyChallenge, UserPersonalDetails, TrackLeaderboard, DailyLearner
 import pandas as pd
 import random
 from pytz import timezone
+import requests
+
+API_TOKEN = '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'
+API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
+headers = {"Authorization": f"Bearer {API_TOKEN}"}
+
+def query(payload):
+	response = requests.post(API_URL, headers=headers, json=payload)
+	return response.json()
 
 database = pd.read_csv("home/database/dictionary.csv")
 
+def generateOptions():
+    n = len(database)
+    optNo = random.sample(range(0, n-1), 2)
+    meaning1 = database['def'][optNo[0]]
+    meaning2 = database['def'][optNo[1]]
+    return [meaning1, meaning2]
 
 def determineLevel(age_group, education_group):
 
@@ -44,10 +59,33 @@ def index(request):
 
 def learn(request):
     if request.user.is_authenticated:
-        return render(request, "learn.html", {"loggedIn": True})
+        attempts = 0
+        try:
+            dl = DailyLearner.objects.filter(user=request.user).get()
+            if dl.attemptCount>=10:
+                return render(request, "learn.html", {"loggedIn": True, "limit":True})
+            else:
+                attempts = dl.attemptCount
+        except:
+            pass
+
+        level = Learner.objects.filter(user=request.user).get()
+        df_shuffled = database.sample(frac=1, random_state=42)
+        if level == 'BGR':
+            mask = (df_shuffled['word'].str.len() >=3) & (df_shuffled['word'].str.len()<6) 
+            question_row = df_shuffled.loc[mask].sample()
+        elif level == 'ITD':
+            mask = (df_shuffled['word'].str.len() >=5) & (df_shuffled['word'].str.len()<8) 
+            question_row = df_shuffled.loc[mask].sample()
+        else:
+            mask = (df_shuffled['word'].str.len() >=8) 
+            question_row = df_shuffled.loc[mask].sample()
+        
+        date=datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d')
+        return render(request, "learn.html", {"loggedIn": True, "attempts":attempts, "question": question_row['word'].to_string().split()[1],"pos":question_row['pos'].to_string().split()[1], "index": question_row.index.values.astype(int)[0], "date": date, "limit":False})
 
     else:
-        return render(request, "learn.html", {"loggedIn": False})
+        return render(request, "learn.html", {"loggedIn": False, "limit":False})
 
 
 def login_view(request):
@@ -101,13 +139,6 @@ def updateLeaderboardDataForUser(user, date, group):
     except:
         return False
 
-
-def generateOptions():
-    n = len(database)
-    optNo = random.sample(range(0, n-1), 2)
-    meaning1 = database['def'][optNo[0]]
-    meaning2 = database['def'][optNo[1]]
-    return [meaning1, meaning2]
 
 
 def signup(request):
@@ -435,3 +466,39 @@ def leaderboards(request):
                 "message": "Could not load your request!"
             }
             return render(request, "leaderboards.html", context)
+
+@login_required
+def learn_form_check(request):
+
+    if request.method == "POST":
+        index = request.POST['index']
+        sentence = request.POST['answer']
+        source = database.iloc[[index]]['def'].to_string().split()[1:]
+        source_sentence = " ".join(source)
+        output = query({
+            "inputs": {
+                "source_sentence": source_sentence,
+                "sentences": [
+                    sentence
+                ]
+            },
+        })
+
+        date=datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d')
+
+        try:
+            du = DailyLearner.objects.filter(user=request.user).get()
+            print(date, du.date)
+            if str(date) == str(du.date):
+                DailyLearner.objects.filter(user=request.user).update(attemptCount = du.attemptCount+1, latest_ans=index)
+            else:
+                DailyLearner.objects.filter(user=request.user).update(attemptCount = 0, date = date, latest_ans=index)
+        except:
+            du = DailyLearner.objects.create(user=request.user, attemptCount=1, latest_ans=index)
+            du.save()
+
+        return render(request, "learn_submit.html", {"loggedIn": True, "score": output[0]*100, "meaning": source_sentence})
+    else:
+        return HttpResponseNotFound('<h1>Bad request!</h1>')
+
+    

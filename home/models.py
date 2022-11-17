@@ -77,3 +77,10 @@ class TrackLeaderboard(models.Model):
     weekly = models.FloatField(max_length=5, default=0.00, null=False)
     monthly = models.FloatField(max_length=5, default=0.00, null=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+
+class DailyLearner(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    date = models.DateField(default=datetime.now(timezone("Asia/Kolkata")).strftime(
+        '%Y-%m-%d'), blank=True)
+    attemptCount = models.IntegerField(default=0, null=False, unique=False)
+    latest_ans = models.CharField(max_length=100, null=False)
