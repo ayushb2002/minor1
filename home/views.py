@@ -58,18 +58,24 @@ def index(request):
 
 
 def learn(request):
+    date=datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d')
     if request.user.is_authenticated:
         attempts = 0
         try:
             dl = DailyLearner.objects.filter(user=request.user).get()
-            if dl.attemptCount>=10:
+            if dl.attemptCount>=10 and dl.date == date:
                 return render(request, "learn.html", {"loggedIn": True, "limit":True})
             else:
-                attempts = dl.attemptCount
+                if dl.attemptCount >= 10:
+                    DailyLearner.objects.update(user=request.user, date=date, attemptCount=0)
+                    attempts = 0
+                else:
+                    attempts = dl.attemptCount
         except:
             pass
 
         level = Learner.objects.filter(user=request.user).get()
+        level = level.level
         df_shuffled = database.sample(frac=1, random_state=42)
         if level == 'BGR':
             mask = (df_shuffled['word'].str.len() >=3) & (df_shuffled['word'].str.len()<6) 
@@ -207,12 +213,33 @@ def editSettings(request):
 
 @login_required
 def changePassword(request):
-    return render(request, "changePassword.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True})
+    if request.method == 'POST':
+        username = request.POST['username']
+        pwd = request.POST['password']
+        cpwd = request.POST['confirmPassword']
+        if pwd!=cpwd:
+            return render(request, "changePassword.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message":"Passwords does not match!"})
+        else:
+            if request.user == User.objects.get(username=username):
+                u = User.objects.get(username=username)
+                u.set_password(pwd)
+                u.save()
+                return redirect('login')
+            else:
+                return render(request, "changePassword.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message":"Invalid username!"})
+    else:
+        return render(request, "changePassword.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True})
 
 
 @login_required
 def deleteAccount(request):
-    return render(request, "deleteAccount.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True})
+    if request.method == 'POST':
+        username = request.POST['username']
+        u = User.objects.get(username=username)
+        u.delete()
+        return redirect('login')
+    else:
+        return render(request, "deleteAccount.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True})
 
 
 @login_required
@@ -416,6 +443,7 @@ def leaderboards(request):
         elif filter == 'WLY':
             date = (datetime.now(timezone("Asia/Kolkata")) -
                     dtm.timedelta(days=7)).date()
+            print(date)
         elif filter == 'MLY':
             date = (datetime.now(timezone("Asia/Kolkata")) -
                     dtm.timedelta(days=30)).date()
