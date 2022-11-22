@@ -172,14 +172,17 @@ def dailyChallenge(request):
 
 @login_required
 def addDailyChallenge(request):
-    if request.user.is_superuser:
-        dc = DailyChallenge.objects.filter(
-            date=datetime.today().strftime('%Y-%m-%d'))
-        if dc:
-            return render(request, "welcome.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Today's word has been already added!"})
+    try:
+        if request.user.is_superuser:
+            dc = DailyChallenge.objects.filter(
+                date=datetime.today().strftime('%Y-%m-%d'))
+            if dc:
+                return render(request, "welcome.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "message": "Today's word has been already added!"})
+            else:
+                return render(request, "addDailyChallenge.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True})
         else:
-            return render(request, "addDailyChallenge.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True})
-    else:
+            return redirect('settings')
+    except:
         return redirect('settings')
 
 
