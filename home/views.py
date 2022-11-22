@@ -523,11 +523,11 @@ def learn_form_check(request):
         try:
             du = DailyLearner.objects.filter(user=request.user).get()
             if str(date) == str(du.date):
-                DailyLearner.objects.filter(user=request.user).update(attemptCount = du.attemptCount+1, latest_ans=index)
+                DailyLearner.objects.filter(user=request.user).update(attemptCount = du.attemptCount+1, latest_ans=meaning)
             else:
-                DailyLearner.objects.filter(user=request.user).update(attemptCount = 0, date = date, latest_ans=index)
+                DailyLearner.objects.filter(user=request.user).update(attemptCount = 0, date = date, latest_ans=meaning)
         except:
-            du = DailyLearner.objects.create(user=request.user, attemptCount=1, latest_ans=index)
+            du = DailyLearner.objects.create(user=request.user, attemptCount=1, latest_ans=meaning)
             du.save()
 
         return render(request, "learn_submit.html", {"loggedIn": True, "score": output[max_output]*100, "meaning": meaning})
