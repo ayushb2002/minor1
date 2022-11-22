@@ -7,12 +7,18 @@ Edit Learner Profile
 {% block content %}
 
 <div class="p-5">
+
+    {% if level %}
+    <div class="p-3">
+        Current Level : {{level}}
+    </div>
+    {% endif %}
     <form action="{% url 'updateLearner' %}" method="post" class="mx-5 px-5">
         {% csrf_token %}
         <div class="mb-3">
             <label for="level" class="form-label">Select Level</label>
             <select name="level" class="form-select">
-                <option value="BEG" default selected>Beginner</option>
+                <option value="BGR" default selected>Beginner</option>
                 <option value="ITD">Intermediate</option>
                 <option value="ADV">Advanced</option>
             </select>
