@@ -9,6 +9,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.contrib.auth.decorators import login_required
 from .models import Learner, DailyChallenge, TrackDailyChallenge, UserPersonalDetails, TrackLeaderboard, DailyLearner
 import pandas as pd
+import numpy as np
 import random
 from pytz import timezone
 import requests
@@ -60,6 +61,8 @@ def index(request):
 def learn(request):
     date=datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d')
     if request.user.is_authenticated:
+        if request.user.is_superuser:
+            return redirect('index')
         attempts = 0
         try:
             dl = DailyLearner.objects.filter(user=request.user).get()
@@ -88,7 +91,7 @@ def learn(request):
             question_row = df_shuffled.loc[mask].sample()
         
         date=datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d')
-        return render(request, "learn.html", {"loggedIn": True, "attempts":attempts, "question": question_row['word'].to_string().split()[1],"pos":question_row['pos'].to_string().split()[1], "index": question_row.index.values.astype(int)[0], "date": date, "limit":False})
+        return render(request, "learn.html", {"loggedIn": True, "attempts":attempts, "question": question_row['word'].to_string().split()[1],"pos":question_row['pos'].to_string().split()[1], "date": date, "limit":False})
 
     else:
         return render(request, "learn.html", {"loggedIn": False, "limit":False})
@@ -499,24 +502,26 @@ def leaderboards(request):
 def learn_form_check(request):
 
     if request.method == "POST":
-        index = request.POST['index']
+        word = request.POST['word']
         sentence = request.POST['answer']
-        source = database.iloc[[index]]['def'].to_string().split()[1:]
-        source_sentence = " ".join(source)
+        source = database[database['word']==word]
+        source_sentences = []
+        for rows in source['def']:
+            source_sentences.append(rows)
+
         output = query({
             "inputs": {
-                "source_sentence": source_sentence,
-                "sentences": [
-                    sentence
-                ]
+                "source_sentence": sentence,
+                "sentences": source_sentences
             },
         })
 
+        max_output = np.argmax(output)
+        meaning = source_sentences[max_output]
         date=datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d')
 
         try:
             du = DailyLearner.objects.filter(user=request.user).get()
-            print(date, du.date)
             if str(date) == str(du.date):
                 DailyLearner.objects.filter(user=request.user).update(attemptCount = du.attemptCount+1, latest_ans=index)
             else:
@@ -525,7 +530,7 @@ def learn_form_check(request):
             du = DailyLearner.objects.create(user=request.user, attemptCount=1, latest_ans=index)
             du.save()
 
-        return render(request, "learn_submit.html", {"loggedIn": True, "score": output[0]*100, "meaning": source_sentence})
+        return render(request, "learn_submit.html", {"loggedIn": True, "score": output[max_output]*100, "meaning": meaning})
     else:
         return HttpResponseNotFound('<h1>Bad request!</h1>')
 

@@ -14,7 +14,7 @@ Learn
         </div>
 
         <div class="col-12 text-center p-5">
-            <span class="fs-3 text-primary">Your score - {{score}}%</span><br>
+            <span class="fs-3 text-primary">Your score - {{score|floatformat:2}}%</span><br>
             <span class="fs-4 text-secondary">Actual Meaning - {{meaning}}</span><br><br>
 
             <span class="fs-5 text-success">Attempt next question! <a href="{% url 'learn' %}">Click here</a></span>

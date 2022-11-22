@@ -28,7 +28,7 @@ Learn
             <form action="{% url 'learn_form_check' %}" method="post">
                 {% csrf_token %}
                 <div class="my-5">
-                    <input type="hidden" name="index" value="{{index}}">
+                    <input type="hidden" name="word" value="{{question}}">
                 <input type="text" name="answer" class="form-control" placeholder="Enter your answer!">
                 </div>
                 <input type="submit" name="submit" class="btn btn-success" value="Submit">
