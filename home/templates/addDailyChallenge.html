@@ -7,6 +7,9 @@ Add daily challenge
 {% block content %}
 
 <div class="p-5">
+    <span class="fs-2 text-primary">Daily Challenge Panel!</span>
+    <br>
+    <br>
     <form action="{% url 'addedDailyChallenge' %}" method="post" class="mx-5 px-5">
         {% csrf_token %}
         <div class="mb-3">
