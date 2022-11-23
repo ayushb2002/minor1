@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Learn
+{% endblock title %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        {% if loggedIn %}
+
+        <div class="col-12 text-center p-5">
+            <span class="fw-bold fs-3">VskillUp</span> <br>
+            <span class="fs-4">Sentence forming and grammar check!</span>
+        </div>
+
+        <div class="col-12 text-center p-5">
+            <form action="{% url 'sentenceCheck' %}" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="text-sentence" class="form-label">Try a sentence out of your word!</label>
+                    <input type="text" name="text-sentence" class="form-control" required>
+                </div>
+                <input type="submit" name="submit" class="btn btn-primary" value="Check grammar!">
+            </form>
+        </div>
+
+        {% endif %}
+        {% if message %}
+        <div class="col-12 text-center p-5">
+                <span class="text-primary">Correction suggested : {{correction}}</span>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock body %}

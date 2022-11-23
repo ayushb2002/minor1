@@ -16,11 +16,16 @@ import requests
 
 API_TOKEN = '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'
 API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
+API_URL_2 = "https://api-inference.huggingface.co/models/vennify/t5-base-grammar-correction"
 headers = {"Authorization": f"Bearer {API_TOKEN}"}
 
 def query(payload):
 	response = requests.post(API_URL, headers=headers, json=payload)
 	return response.json()
+
+def query_2(payload):
+    response = requests.post(API_URL_2, headers=headers, json=payload)
+    return response.json()
 
 database = pd.read_csv("home/database/dictionary.csv")
 
@@ -523,15 +528,28 @@ def learn_form_check(request):
         try:
             du = DailyLearner.objects.filter(user=request.user).get()
             if str(date) == str(du.date):
-                DailyLearner.objects.filter(user=request.user).update(attemptCount = du.attemptCount+1, latest_ans=meaning)
+                DailyLearner.objects.filter(user=request.user).update(attemptCount = du.attemptCount+1, latest_ans=str(meaning))
             else:
-                DailyLearner.objects.filter(user=request.user).update(attemptCount = 0, date = date, latest_ans=meaning)
+                DailyLearner.objects.filter(user=request.user).update(attemptCount = 0, date = date, latest_ans=str(meaning))
         except:
-            du = DailyLearner.objects.create(user=request.user, attemptCount=1, latest_ans=meaning)
+            du = DailyLearner.objects.create(user=request.user, attemptCount=1, latest_ans=str(meaning))
             du.save()
 
         return render(request, "learn_submit.html", {"loggedIn": True, "score": output[max_output]*100, "meaning": meaning})
     else:
         return HttpResponseNotFound('<h1>Bad request!</h1>')
 
-    
+
+def sentenceCheck(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            sentence = request.POST['text-sentence']
+            output = query_2({
+                "inputs": sentence,
+            })
+            print(output)
+            return render(request, "sentences.html", {"loggedIn": True, "correction": output[0]['generated_text'], "message":True})
+        else:
+            return render(request, "sentences.html", {"loggedIn": True})
+    else:
+        return redirect('login')
