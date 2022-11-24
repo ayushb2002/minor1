@@ -40,11 +40,12 @@
         <li class="nav-item">
           <a class="nav-link" aria-current="page" href="{% url 'index' %}">Home</a>
         </li>
+        
+        {% if loggedIn %}
+        {% if not request.user.is_superuser %}
         <li class="nav-item">
           <a class="nav-link" href="{% url 'learn' %}">Learn</a>
         </li>
-        {% if loggedIn %}
-        {% if not request.user.is_superuser %}
         <li class="nav-item">
           <a class="nav-link" href="{% url 'sentenceCheck' %}">Grammar Check</a>
         </li>
@@ -63,7 +64,9 @@
         </li>
 
         {% else %}
-
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'learn' %}">Learn</a>
+        </li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'login' %}">Login</a>
         </li>

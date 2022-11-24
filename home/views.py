@@ -548,6 +548,11 @@ def sentenceCheck(request):
                 "inputs": sentence,
             })
             print(output)
+            try:
+                if output['error']:
+                    return render(request, "sentences.html", {"loggedIn":True})
+            except:
+                pass
             return render(request, "sentences.html", {"loggedIn": True, "correction": output[0]['generated_text'], "message":True})
         else:
             return render(request, "sentences.html", {"loggedIn": True})

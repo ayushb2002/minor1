@@ -19,9 +19,11 @@ Learn
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="text-sentence" class="form-label">Try a sentence out of your word!</label>
-                    <input type="text" name="text-sentence" class="form-control" required>
+                    <textarea name="text-sentence" class="form-control" style="height:30vh" required> </textarea>
                 </div>
-                <input type="submit" name="submit" class="btn btn-primary" value="Check grammar!">
+                <div style="padding:0 40%">
+                    <input type="submit" name="submit" class="btn btn-primary w-100" value="Check grammar!">
+                </div>
             </form>
         </div>
 
