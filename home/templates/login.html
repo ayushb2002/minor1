@@ -8,26 +8,27 @@ Login
 <div class="container-fluid login">
     <div class="row">
       {% if message %}
-      <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+      <div class="col-12 alert alert-secondary alert-dismissible fade show" role="alert">
         {{message}}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
       {% endif %}
-        <div class="col-12 text-center p-5">
+      <div class="col-sm-12 col-lg-6"></div>
+        <div class="col-sm-12 col-lg-6 text-center">
             <form class="login-form" action="{% url 'signin' %}" method="post">
               {% csrf_token %}
-                <div class="mb-3">
-                    <span class="fs-3 fw-bold">Login Form!</span>
+                <div class="mb-4">
+                    <span class="fs-2 fw-bold text-white text-uppercase">Login Form!</span>
                 </div>
                 <div class="mb-3">
-                  <label for="registerEmail" class="form-label">Username</label>
+                  <label for="registerEmail" class="form-label text-white">Username</label>
                   <input type="text" class="form-control" name="uname" required>
                 </div>
                 <div class="mb-3">
-                  <label for="registerPwd" class="form-label">Password</label>
+                  <label for="registerPwd" class="form-label text-white">Password</label>
                   <input type="password" class="form-control" name="registerPwd" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Login</button>
+                <button type="submit" class="btn btn-outline-light">Login</button>
               </form>
         </div>
     </div>

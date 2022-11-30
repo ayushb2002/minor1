@@ -10,19 +10,19 @@ Learn
         {% if loggedIn %}
 
         <div class="col-12 text-center p-5">
-            <span class="fw-bold fs-3">VskillUp</span> <br>
-            <span class="fs-4">Sentence forming and grammar check!</span>
+            <span class="head-text" style="font-size: 3em;">VskillUp</span> <br>
+            <span class="sub-head-text">Sentence forming and grammar check!</span>
         </div>
 
-        <div class="col-12 text-center p-5">
+        <div class="col-12 text-center p-5 exo2">
             <form action="{% url 'sentenceCheck' %}" method="post">
                 {% csrf_token %}
-                <div class="mb-3">
-                    <label for="text-sentence" class="form-label">Try a sentence out of your word!</label>
-                    <textarea name="text-sentence" class="form-control" style="height:30vh" required> </textarea>
+                <div class="mb-3" style="margin: 0 15%;">
+                    <label for="text-sentence" class="form-label fs-4">Try a sentence out of your word!</label>
+                    <textarea name="text-sentence" class="form-control exo2" style="height:30vh;font-size: 1.3em;" required> </textarea>
                 </div>
                 <div style="padding:0 40%">
-                    <input type="submit" name="submit" class="btn btn-primary w-100" value="Check grammar!">
+                    <input type="submit" name="submit" class="btn btn-outline-primary w-100" value="Check grammar!">
                 </div>
             </form>
         </div>

@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Microbe&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bitter&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Glitch&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Exo+2&display=swap');
+
 * {
 	margin: 0;
 	padding: 0;
@@ -44,60 +50,121 @@
 }
 
 .register {
-	background: #D1913C;  /* fallback for old browsers */
-	background: -webkit-linear-gradient(to right, #FFD194, #D1913C);  /* Chrome 10-25, Safari 5.1-6 */
-	background: linear-gradient(to right, #FFD194, #D1913C); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-	
+	min-height: 90vh;
 }
 
-.register-form{
+.register-form {
 	background-color: white;
-	margin: 1.1% 35%;
-	padding: 5%;
-	border-radius: 10%;
+	margin: 15% 20%;
+	padding: 15% 5%;
+	border-radius: 25px;
+	background-image: linear-gradient(-225deg, #FF057C 0%, #8D0B93 50%, #321575 100%);
+	font-family: 'Titillium Web', sans-serif;
 }
 
-.login{
-	background: #ff7e5f;  /* fallback for old browsers */
-background: -webkit-linear-gradient(to right, #feb47b, #ff7e5f);  /* Chrome 10-25, Safari 5.1-6 */
-background: linear-gradient(to right, #feb47b, #ff7e5f); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+.login {
+	min-height: 90vh;
 }
 
-.login-form{
+.login-form {
 	background-color: white;
-	margin: 7.1% 35%;
-	padding: 5%;
-	border-radius: 10%;	
+	margin: 15% 20%;
+	padding: 15% 5%;
+	border-radius: 25px;
+	background-image: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+	font-family: 'Titillium Web', sans-serif;
 }
 
-.welcome-sidenav
-{
+.welcome-sidenav {
 	border-right: 1px solid black;
-	height: 100vh;
+	min-height: 100vh;
 }
 
-.rm-a-dec
-{
+.rm-a-dec {
 	color: black;
 	text-decoration: none;
 }
 
-.rm-a-dec:hover
-{
+.rm-a-dec:hover {
 	color: black;
 }
 
-.hero-area{
+.hero-area {
 	height: 100vh;
 	overflow: hidden;
-	background-image: url('../img/hero-img.jpg');
+	background-image: url('../img/hero-img-2.jpg');
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: cover;
 }
 
-.hero-text{
-	padding: 10%;
+.hero-text {
+	padding: 12%;
 	margin: 2%;
 	opacity: 1;
+}
+
+.head-text {
+	font-family: 'Rubik Microbe', cursive;
+	font-weight: bold;
+}
+
+.sub-head-text {
+	font-family: 'Bitter', serif;
+	font-size: 2em;
+}
+
+.login-form div input, .register-form div input
+{
+	background-color: transparent;
+	border: 2px solid white;
+	padding: 3%;
+	border-radius: 50px;
+	color: white;
+	font-weight: bold;
+}
+
+.login-form button, .register-form button{
+	margin-top: 5%;
+	font-size: 1.3em;
+	color:white;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+.login-form div input:focus, .register-form div input:focus
+{
+	background-color: transparent;
+	border: 2px solid white;
+	color: white;
+}
+
+.step-card{
+	background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
+	min-height: 53vh;
+	margin: 10%;
+	padding: 3%;
+	border-radius: 25px;
+}
+
+.step-card-head{
+	font-size: 3em;
+	color: white;
+	text-transform: uppercase;
+	font-family: 'Rubik Glitch', cursive;
+}
+
+.step-card-text
+{
+	font-size: 1.5em;
+	color: white;
+	font-family: 'Titillium Web', sans-serif;
+}
+
+.exo2{
+	font-family: 'Exo 2', sans-serif;
+}
+
+.settingForm{
+	margin-right: 50%;
 }

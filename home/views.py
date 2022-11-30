@@ -78,7 +78,7 @@ def learn(request):
                     DailyLearner.objects.update(user=request.user, date=date, attemptCount=0)
                     attempts = 0
                 else:
-                    attempts = dl.attemptCount
+                    attempts = 0
         except:
             pass
 
@@ -201,10 +201,12 @@ def signin(request):
         return HttpResponseNotFound('<h1>Bad request!</h1>')
 
 
-@login_required
 def logout_view(request):
-    logout(request)
-    return render(request, "login.html", {"message": "Logged out!", "loggedIn": False})
+    if request.user.is_authenticated:
+        logout(request)
+        return render(request, "login.html", {"message": "Logged out!", "loggedIn": False})
+    else:
+        return redirect('index')
 
 
 def loggedInView(request):

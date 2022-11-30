@@ -10,7 +10,7 @@ Edit Learner Profile
 
     {% if level %}
     <div class="p-3">
-        Current Level : {{level}}
+        Current Level : <span class="text-info fw-bold">{{level}}</span>
     </div>
     {% endif %}
     <form action="{% url 'updateLearner' %}" method="post" class="mx-5 px-5">
@@ -23,7 +23,7 @@ Edit Learner Profile
                 <option value="ADV">Advanced</option>
             </select>
         </div>
-        <input type="submit" value="Submit" class="btn btn-primary">
+        <input type="submit" value="Submit" class="btn btn-outline-primary">
     </form>
 </div>
 

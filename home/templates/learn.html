@@ -10,31 +10,31 @@ Learn
         {% if loggedIn %}
 
         <div class="col-12 text-center p-5">
-            <span class="fw-bold fs-3">VskillUp</span>
+            <span class="head-text fs-1">VskillUp</span>
         </div>
 
         {% if limit %}
 
         <div class="col-12 p-5">
-            <span class="fs-2">Daily Limit Reached!</span>
+            <span class="fs-2 exo2">Daily Limit Reached!</span>
         </div>
 
         {% else %}
 
-        <div class="col-10" style="padding:5% 10%">
-            <span class="fs-2">{{question}}</span><br>
+        <div class="col-10 exo2" style="padding:5% 10%">
+            <span class="fs-1">{{question}}</span><br>
             <span class="fs-4">{{pos}}</span>
             <br><br>
             <form action="{% url 'learn_form_check' %}" method="post">
                 {% csrf_token %}
                 <div class="my-5">
                     <input type="hidden" name="word" value="{{question}}">
-                <input type="text" name="answer" class="form-control" placeholder="Enter your answer!">
+                    <input type="text" name="answer" class="form-control" placeholder="Enter your answer!">
                 </div>
-                <input type="submit" name="submit" class="btn btn-success" value="Submit">
+                <input type="submit" name="submit" class="btn btn-outline-success" value="Submit">
             </form>
         </div>
-        <div class="col-2" style="padding: 5%; border-left: 5px solid black;">
+        <div class="col-2 exo2" style="padding: 5%; border-left: 5px solid black;">
             {{date}} <br><br>
             Attempt - {{attempts}}
         </div>
@@ -44,10 +44,59 @@ Learn
         {% else %}
 
         <div class="col-12 text-center p-5">
-            <span class="fw-bold fs-3">Welcome to Minor Project</span><br>
-            <span class="fw-bold fs-3">VskillUp</span>
+            <span class="head-text" style="font-size: 4em;">VskillUp</span> <br>
+            <span class="sub-head-text fw-bold">Making learning a sport!</span>
         </div>
-        
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-12 col-lg-4">
+                    <div class="step-card text-center">
+                        <div class="p-2">
+                            <span class="step-card-head">
+                                Step - 1
+                            </span>
+                        </div>
+                        <div class="p-5">
+                            <p class="step-card-text">
+                                Login / Register with us to begin your amazing journey!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- End of card -->
+                <div class="col-sm-12 col-lg-4">
+                    <div class="step-card text-center">
+                        <div class="p-2">
+                            <span class="step-card-head">
+                                Step - 2
+                            </span>
+                        </div>
+                        <div class="p-5">
+                            <p class="step-card-text">
+                                Set your learning level or enter your details to help us decide one for you!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- End of card -->
+                <div class="col-sm-12 col-lg-4">
+                    <div class="step-card text-center">
+                        <div class="p-2">
+                            <span class="step-card-head">
+                                Step - 3
+                            </span>
+                        </div>
+                        <div class="p-5">
+                            <p class="step-card-text">
+                                Learn 10 words daily by subjective approach and solve daily challenge to test yourself!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- End of card -->
+            </div>
+        </div>
+
         {% endif %}
     </div>
 </div>
