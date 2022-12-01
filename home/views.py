@@ -82,7 +82,8 @@ def learn(request):
                 else:
                     attempts = dl.attemptCount
             else:
-                return HttpResponseNotFound('<h1>Server time mismatch!</h1>')
+                DailyLearner.objects.filter(user=request.user).update(attemptCount=0, date=date)
+                attempts = 0
         except:
             pass
 
