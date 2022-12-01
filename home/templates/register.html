@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block title %}
 Register
 {% endblock title %}
@@ -15,7 +17,16 @@ Register
       </div>
     </div>
       {% endif %}
-      <div class="col-sm-12 col-lg-6"></div>
+      <div class="col-sm-12 col-lg-6">
+        <div class="form-decoration">
+          <div>
+          <span class="head-text" style="font-size:4em;">VskillUp</span>
+        </div>
+        <div>
+          <img src="{% static 'img/register-vector.jpg' %}" alt="login-vector" class="form-image">
+        </div>
+        </div>
+      </div>
       <div class="col-sm-12 col-lg-6 text-center">
         <form class="register-form" method="post" action="{% url 'signup' %}">
           {% csrf_token %}

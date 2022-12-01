@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block title %}
 Login
 {% endblock title %}
@@ -13,7 +15,16 @@ Login
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
       {% endif %}
-      <div class="col-sm-12 col-lg-6"></div>
+      <div class="col-sm-12 col-lg-6">
+        <div class="form-decoration">
+          <div>
+          <span class="head-text" style="font-size:4em;">VskillUp</span>
+        </div>
+        <div>
+          <img src="{% static 'img/login-vector.jpg' %}" alt="login-vector" class="form-image">
+        </div>
+        </div>
+      </div>
         <div class="col-sm-12 col-lg-6 text-center">
             <form class="login-form" action="{% url 'signin' %}" method="post">
               {% csrf_token %}
