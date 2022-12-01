@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}
 Minor project
 {% endblock title %}
@@ -7,14 +7,21 @@ Minor project
 {% block body %}
 <div class="container-fluid">
     <div class="row">
-        <div class="col-12 text-center align-middle hero-area d-flex justify-content-end">
-            <div class="text-white hero-text">
+        <div class="col-12 text-center align-middle hero-area d-flex justify-content-end ">
+            <div class=" text-white hero-text">
                 <span class="head-text" style="font-size: 6em;">VSkillUp</span> <br><br>
                 <span class="sub-head-text text-white">
                    <a href="{% url 'login' %}" style="text-decoration: none; color:white; font-weight: bold;">Login</a> or <a href="{% url 'register' %}" style="text-decoration: none; color:white; font-weight: bold;">Register</a> to play the daily challenge!
                 </span>
             </div>
+
+        </div>
+        <div class="col-12">
+
         </div>
     </div>
 </div>
+
+
+
 {% endblock body %}

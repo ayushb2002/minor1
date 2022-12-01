@@ -3,6 +3,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Rubik+Glitch&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Exo+2&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Distressed&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Secular+One&display=swap');
 
 * {
 	margin: 0;
@@ -36,11 +38,11 @@
 .sidenav li a {
 	color: black;
 	text-decoration: none;
-	font-size: 1.1rem;
+	font-size: 1.25rem;
 }
 
 .sidenav li a:hover {
-	color: black;
+	color: #F5B041;
 	text-decoration: none;
 }
 
@@ -56,10 +58,12 @@
 .register-form {
 	background-color: white;
 	margin: 15% 20%;
-	padding: 15% 5%;
+	padding: 10% 5%;
 	border-radius: 25px;
-	background-image: linear-gradient(-225deg, #FF057C 0%, #8D0B93 50%, #321575 100%);
-	font-family: 'Titillium Web', sans-serif;
+	background-color: #FF9A8B;
+	background-image: linear-gradient(90deg, #FF9A8B 0%, #FF6A88 55%, #FF99AC 100%);
+
+	font-family: 'Secular One', sans-serif;
 }
 
 .login {
@@ -72,7 +76,7 @@
 	padding: 15% 5%;
 	border-radius: 25px;
 	background-image: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
-	font-family: 'Titillium Web', sans-serif;
+	font-family: 'Secular One', sans-serif;
 }
 
 .welcome-sidenav {
@@ -92,11 +96,12 @@
 .hero-area {
 	height: 100vh;
 	overflow: hidden;
-	background-image: url('../img/hero-img-2.jpg');
+	background-image: url('../img/hero-img-3.jpg');
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: cover;
 }
+
 
 .hero-text {
 	padding: 12%;
@@ -140,23 +145,28 @@
 }
 
 .step-card{
-	background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
-	min-height: 53vh;
-	margin: 10%;
-	padding: 3%;
-	border-radius: 25px;
+	background-color: #F5B041;
+	height: 50vh;
+	width: 50vh;
+	margin: 10% 10%;
+	padding: 7% 2%;
+	border-radius: 50%;
+	border-color: black;
+	border-style: dashed;
+	border-width: 0.3em;
+
 }
 
 .step-card-head{
-	font-size: 3em;
+	font-size: 2.5em;
 	color: white;
 	text-transform: uppercase;
-	font-family: 'Rubik Glitch', cursive;
+	font-family: 'Rubik Distressed', cursive;
 }
 
 .step-card-text
 {
-	font-size: 1.5em;
+	font-size: 1.30em;
 	color: white;
 	font-family: 'Titillium Web', sans-serif;
 }
@@ -176,4 +186,23 @@
 .form-image{
 	width: 60vh;
 	height: 60vh;
+}
+
+.learn-bg{
+	background-image: url('../img/bg.jpg');
+	height: 100vh;
+	overflow: hidden;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+}
+
+.clouds {
+	width: auto;
+	height: 100%;
+	position: absolute;
+	right: 15px;
+	left: 5px;
+	overflow: hidden;
+
 }
