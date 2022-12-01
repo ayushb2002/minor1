@@ -71,14 +71,18 @@ def learn(request):
         attempts = 0
         try:
             dl = DailyLearner.objects.filter(user=request.user).get()
-            if dl.attemptCount>=10 and dl.date == date:
+            print(dl.date, date, dl.attemptCount)
+            if dl.attemptCount>=10 and str(dl.date) == str(date):
                 return render(request, "learn.html", {"loggedIn": True, "limit":True})
-            else:
+            elif str(dl.date) == str(date):
                 if dl.attemptCount >= 10:
-                    DailyLearner.objects.update(user=request.user, date=date, attemptCount=0)
-                    attempts = 0
+                    DailyLearner.objects.filter(user=request.user, date=date).update(attemptCount=0)
+                    dl = DailyLearner.objects.filter(user=request.user).get()
+                    attempts = dl.attemptCount
                 else:
-                    attempts = 0
+                    attempts = dl.attemptCount
+            else:
+                return HttpResponseNotFound('<h1>Server time mismatch!</h1>')
         except:
             pass
 
@@ -121,32 +125,33 @@ def register(request):
 def updateLeaderboardDataForUser(user, date, group):
     print(user, date, group)
     try:
-        track = TrackDailyChallenge.objects.filter(user=user, date__range=[
-                                                   datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'), date]).order_by('-accuracy')
+        track = TrackDailyChallenge.objects.filter(user=user, date__range=[date, 
+                                                   datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d')]).order_by('-accuracy')
+        print(track)
         if track is None:
             return False
 
-        avg, iter = 0, 0
+        avg, ite = 0, 0 # ite -> iterator
         for tr in track:
-            iter += 1
+            ite += 1
             avg += tr.accuracy
-        avg = avg/iter
+        avg = avg/ite
+
+        print(avg)
 
         try:
             if group == 'MLY':
-                trackLb = TrackLeaderboard.objects.update(
-                    user=user, group=group, monthly=avg)
+                TrackLeaderboard.objects.filter(user=user).update(monthly=avg)
             elif group == 'WLY':
-                trackLb = TrackLeaderboard.objects.update(
-                    user=user, group=group, weekly=avg)
+                TrackLeaderboard.objects.filter(user=user).update(weekly=avg)
         except:
             if group == 'MLY':
                 trackLb = TrackLeaderboard.objects.create(
-                    user=user, group=group, monthly=avg)
+                    user=user, monthly=avg)
                 trackLb.save()
             elif group == 'WLY':
                 trackLb = TrackLeaderboard.objects.create(
-                    user=user, group=group, weekly=avg)
+                    user=user, weekly=avg)
                 trackLb.save()
 
         return True
@@ -393,42 +398,6 @@ def userPersonalDetails(request):
         return render(request, "ageAndEducation.html", {"name": request.user.first_name+' '+request.user.last_name, "loggedIn": True, "details": personalDetails[0]})
 
 
-def updateLeaderboardDataForUser(user, date, group):
-    try:
-        track = TrackDailyChallenge.objects.filter(user=user, date__range=[
-                                                   date, datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d')]).order_by('-accuracy')
-        if track is None:
-            return False
-
-        avg, iter = 0, 0
-        for tr in track:
-            iter += 1
-            avg += tr.accuracy
-        avg = avg/iter
-        try:
-            if group == 'MLY':
-                trackLb = TrackLeaderboard.objects.filter(
-                    user=user, group=group).update(monthly=avg)
-            elif group == 'WLY':
-                trackLb = TrackLeaderboard.objects.filter(
-                    user=user, group=group).update(weekly=avg)
-        except:
-            try:
-                if group == 'MLY':
-                    trackLb = TrackLeaderboard.objects.create(
-                        user=user, group=group, monthly=avg)
-                elif group == 'WLY':
-                    trackLb = TrackLeaderboard.objects.create(
-                        user=user, group=group, weekly=avg)
-                trackLb.save()
-            except:
-                return False
-
-        return True
-    except:
-        return False
-
-
 @login_required
 def leaderboards(request):
     if request.method == "POST":
@@ -453,7 +422,6 @@ def leaderboards(request):
         elif filter == 'WLY':
             date = (datetime.now(timezone("Asia/Kolkata")) -
                     dtm.timedelta(days=7)).date()
-            print(date)
         elif filter == 'MLY':
             date = (datetime.now(timezone("Asia/Kolkata")) -
                     dtm.timedelta(days=30)).date()
@@ -462,11 +430,9 @@ def leaderboards(request):
         if updateLeaderboardDataForUser(user=request.user, date=date, group=filter):
             try:
                 if filter == 'WLY':
-                    trackLb = TrackLeaderboard.objects.filter(
-                        group=filter).order_by('-weekly')
+                    trackLb = TrackLeaderboard.objects.all().order_by('-weekly')
                 elif filter == 'MLY':
-                    trackLb = TrackLeaderboard.objects.filter(
-                        group=filter).order_by('-monthly')
+                    trackLb = TrackLeaderboard.objects.all().order_by('-monthly')
             except:
                 context = {
                     "name": request.user.first_name+' '+request.user.last_name,
@@ -477,8 +443,10 @@ def leaderboards(request):
             context = {
                 "name": request.user.first_name+' '+request.user.last_name,
                 "loggedIn": True,
+                "filter": filter,
                 "data": trackLb.values()
             }
+            print(context)
             return render(request, "leaderboards.html", context)
         else:
             context = {
@@ -560,3 +528,19 @@ def sentenceCheck(request):
             return render(request, "sentences.html", {"loggedIn": True})
     else:
         return redirect('login')
+
+def getUserById(request, id):
+    if id==1:
+        return HttpResponseNotFound('<h1>Bad request!</h1>')
+    try:
+        userList = User.objects.get(pk=id)
+        learner = Learner.objects.get(user=userList)
+        context = {
+            'username': userList.username,
+            'first_name': userList.first_name,
+            'last_name': userList.last_name,
+            'level': learner.level
+        }
+        return render(request, "users.html", context)
+    except:
+        return HttpResponse('<h1>User does not exist!</h1>')

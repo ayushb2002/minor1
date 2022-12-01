@@ -72,11 +72,9 @@ class TrackLeaderboard(models.Model):
         (WEEKLY, 'Weekly'),
         (MONTHLY, 'Monthly')
     }
-    group = models.CharField(
-        max_length=3, choices=LEADERBOARD_GROUP, null=False)
     weekly = models.FloatField(max_length=5, default=0.00, null=False)
     monthly = models.FloatField(max_length=5, default=0.00, null=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, unique=True)
 
 class DailyLearner(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
