@@ -10,7 +10,16 @@ Welcome {{name}}
     {% if request.user.is_superuser %}
     <span class="fs-3">Superuser panel!</span>
     {% else %}
-    <span class="fs-3">If you are a new user, head to <b>Edit Learner Profile</b> section to set your learning level!</span>
+    <span class="fs-3 text-primary">If you are a new user, head to <b>Edit Learner Profile</b> section to set your learning level!</span>
+    <div style="border: 1px solid black;margin: 10% 25% 0% 25%; padding: 7% 5%;border-radius: 50px;">
+    <span class="fs-4 fw-bold text-primary">Quick Links</span>
+    <hr />
+    <ul class="list-unstyled fs-5">
+        <li>Start Learning - <a href="{% url 'learn' %}" class="text-primary text-decoration-none">here!</a></li>
+        <li>Practice sentence making - <a href="{% url 'sentenceCheck' %}" class="text-primary text-decoration-none">here!</a></li>
+        <li>Solve daily challenge - <a href="{% url 'dailyChallenge' %}" class="text-primary text-decoration-none">here!</a></li>
+    </ul>
+    </div>
     {% endif %}
 
     {% if message %}

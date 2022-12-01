@@ -5,10 +5,11 @@
   <div class="row">
     <div class="col-3 p-3 welcome-sidenav">
       <ul class="nav flex-column">
-        <li class="nav-item my-5">
-          <a class="nav-link fs-4 rm-a-dec text-decoration-underline" href="{% url 'settings' %}">Welcome {{name}}</a>
+        <li class="nav-item mt-5">
+          <a class="nav-link fs-4 rm-a-dec" href="{% url 'settings' %}">Welcome {{name}}</a>
         </li>
-
+        <hr />
+        <br>
         {% if request.user.is_superuser %}
         <li class="nav-item">
           <a class="nav-link rm-a-dec" href="{% url 'addDailyChallenge' %}">Add daily challenge word</a>

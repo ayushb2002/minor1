@@ -45,7 +45,7 @@ Leader-board | Daily Challenge
                         <tbody>
                             {% for tr in track %}
                             <tr>
-                                <td>{{tr.user}}</td>
+                                <td>{{tr.pk}}</td>
                                 <td>{{tr.accuracy|floatformat:2}}</td>
                             </tr>
                             {% endfor %}
@@ -56,7 +56,15 @@ Leader-board | Daily Challenge
             {% else %}
 
             <div class="row">
-                <div class="col-lg-9 col-sm-12"></div>
+                <div class="col-lg-9 col-sm-12 text-center">
+                    {% if filter == 'MLY' %}
+                            <span class="exo2 fs-4">Monthly</span>
+                        {% elif filter == 'WLY' %}
+                            <span class="exo2 fs-4">Weekly</span>
+                        {% else %}
+                            <span class="ex02 fs-4">Daily</span>
+                        {% endif %}
+                </div>
                 <div class="col-lg-3 col-sm-12">
                     <form action="{% url 'leaderboards' %}" method="post" class="py-1">
                         {% csrf_token %}
@@ -85,8 +93,8 @@ Leader-board | Daily Challenge
                         <tbody>
                             {% for d in data %}
                             <tr>
-                                <td>{{d.user_id}}</td>
-                                {% if d.group == 'MLY' %}
+                                <td> <a href="{% url 'getUserById' d.user_id %}">{{d.user_id}}</a></td>
+                                {% if filter == 'MLY' %}
                                 <td>{{d.monthly|floatformat:2}}</td>
                                 {% else %}
                                 <td>{{d.weekly|floatformat:2}}</td>
