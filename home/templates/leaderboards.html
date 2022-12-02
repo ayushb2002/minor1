@@ -45,7 +45,7 @@ Leader-board | Daily Challenge
                         <tbody>
                             {% for tr in track %}
                             <tr>
-                                <td>{{tr.pk}}</td>
+                                <td><a href="{% url 'getUserById' tr.user_id %}">{{tr.user_id}}</a></td>
                                 <td>{{tr.accuracy|floatformat:2}}</td>
                             </tr>
                             {% endfor %}
