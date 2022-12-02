@@ -7,7 +7,7 @@ Login
 {% endblock title %}
 
 {% block body %}
-<div class="container-fluid login">
+<div class="container-fluid login login-bg">
     <div class="row">
       {% if message %}
       <div class="col-12 alert alert-secondary alert-dismissible fade show" role="alert">
@@ -15,14 +15,21 @@ Login
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
       {% endif %}
+
       <div class="col-sm-12 col-lg-6">
         <div class="form-decoration">
           <div>
           <span class="head-text" style="font-size:4em;">VskillUp</span>
         </div>
-        <div>
-          <img src="{% static 'img/login-vector.jpg' %}" alt="login-vector" class="form-image">
+        <div class="col-11 login-text">
+          <span>
+            Let's <br>continue our <button class="wtext button" type="button" data-hover="m: amazing"> <span>marvellous*</span></button> journey.
+          </span>
+         
         </div>
+       <!-- <div>
+          <img src="{% static 'img/login-vector.jpg' %}" alt="login-vector" class="form-image">
+        </div> -->
         </div>
       </div>
         <div class="col-sm-12 col-lg-6 text-center">

@@ -7,7 +7,7 @@ Register
 {% endblock title %}
 
 {% block body %}
-<div class="container-fluid register">
+<div class="container-fluid register register-bg">
   <div class="row">
     {% if message %}
     <div class="col-12 p-5">
@@ -22,8 +22,11 @@ Register
           <div>
           <span class="head-text" style="font-size:4em;">VskillUp</span>
         </div>
-        <div>
-          <img src="{% static 'img/register-vector.jpg' %}" alt="login-vector" class="form-image">
+        <div class="col-11 login-text">
+          <span>
+            Let's <br>start our <button class="wtext button" type="button" data-hover="m: amazing"> <span>marvellous*</span></button> journey.
+          </span>
+         
         </div>
         </div>
       </div>
