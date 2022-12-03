@@ -25,6 +25,5 @@ urlpatterns = [
      path('leaderboards', views.leaderboards, name="leaderboards"),
      path('learn_form_check', views.learn_form_check, name="learn_form_check"),
      path('sentenceCheck', views.sentenceCheck, name="sentenceCheck"),
-     path('getUserById/<int:id>/', views.getUserById, name="getUserById"),
-     path('oneOnOneChallenge', views.oneOnOneChallenge, name="oneOnOneChallenge")
+     path('getUserById/<int:id>/', views.getUserById, name="getUserById")
 ]
