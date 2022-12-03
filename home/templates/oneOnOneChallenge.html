@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+One on One Challenge
+{% endblock title %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        {% if loggedIn %}
+        {% if error %}
+        <div class="alert alert-warning p-3">
+            {{error}}
+        </div>
+        {% else %}
+        <div class="col-12 p-5 text-center">
+            <span class="head-text" style="font-size: 4em;">VskillUp</span> <br>
+            <span class="sub-head-text">Live Challenge</span>
+            <div style="padding: 10% 35%;" class="exo2">  
+                <form action="{% url 'oneOnOneChallenge' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="userId" class="form-label">Enter user-Id to challenge!</label>
+                        <input type="text" name="userId" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-outline-primary">Send Challenge</button>
+                    </div>
+                </form>
+            </div>
+        </div>        
+        {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock body %}
