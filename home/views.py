@@ -541,3 +541,16 @@ def getUserById(request, id):
         return render(request, "users.html", context)
     except:
         return HttpResponse('<h1>User does not exist!</h1>')
+
+
+@login_required
+def oneOnOneChallenge(request):
+    if request.method == "POST":
+        userId = request.POST['userId']
+        uc = User.objects.get(pk=userId)
+        if request.user == uc:
+            return render(request, "oneOnOneChallenge.html", {"loggedIn": True, "error": "You cannot challenge yourself!"})
+
+        return redirect('oneOnOneChallenge')
+    else:
+        return render(request, "oneOnOneChallenge.html", {"loggedIn":True})
