@@ -179,12 +179,8 @@ def signup(request):
             personalDetails = UserPersonalDetails.objects.create(
                 user=user)
             personalDetails.save()
-            trackLbM = TrackLeaderboard.objects.create(
-                user=user, group='MLY', monthly=0.00, weekly=0.00)
+            trackLbM = TrackLeaderboard.objects.create(user=user)
             trackLbM.save()
-            trackLbW = TrackLeaderboard.objects.create(
-                user=user, group='WLY', weekly=0.00, monthly=0.00)
-            trackLbW.save()
         except:
             return render(request, "register.html", {"message": "Cannot create the user!", "loggedIn": False})
 
