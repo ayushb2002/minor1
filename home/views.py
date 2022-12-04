@@ -71,7 +71,7 @@ def learn(request):
         attempts = 0
         try:
             dl = DailyLearner.objects.filter(user=request.user).get()
-            print(dl.date, date, dl.attemptCount)
+            
             if dl.attemptCount>=10 and str(dl.date) == str(date):
                 return render(request, "learn.html", {"loggedIn": True, "limit":True})
             elif str(dl.date) == str(date):
@@ -124,11 +124,9 @@ def register(request):
 
 
 def updateLeaderboardDataForUser(user, date, group):
-    print(user, date, group)
     try:
         track = TrackDailyChallenge.objects.filter(user=user, date__range=[date, 
                                                    datetime.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d')]).order_by('-accuracy')
-        print(track)
         if track is None:
             return False
 
@@ -138,7 +136,6 @@ def updateLeaderboardDataForUser(user, date, group):
             avg += tr.accuracy
         avg = avg/ite
 
-        print(avg)
 
         try:
             if group == 'MLY':
@@ -443,7 +440,6 @@ def leaderboards(request):
                 "filter": filter,
                 "data": trackLb.values()
             }
-            print(context)
             return render(request, "leaderboards.html", context)
         else:
             context = {
@@ -514,7 +510,6 @@ def sentenceCheck(request):
             output = query_2({
                 "inputs": sentence,
             })
-            print(output)
             try:
                 if output['error']:
                     return render(request, "sentences.html", {"loggedIn":True})
